@@ -1,0 +1,125 @@
+<form>
+  <label>Bro RFP</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="timepicker" searchWhenChanged="true">
+      <label>Select Time</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="radio" token="auto_refresh" searchWhenChanged="true">
+      <label>Auto Refresh</label>
+      <choice value="5s">5 Seconds</choice>
+      <choice value="30s">30 Seconds</choice>
+      <choice value="1m">1 Minute</choice>
+      <choice value="2m">2 Minutes</choice>
+      <choice value="5m">5 minutes</choice>
+    </input>
+    <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
+      <label>Source IP:</label>
+      <default>*</default>
+      <choice value="*">All</choice>
+      <search>
+        <query>sourcetype=BASE id.orig_p=$sourceport_tok$ id.resp_h=$destinationip_tok$ id.resp_p=$destinationport_tok$ | stats count by id.orig_h</query>
+        <earliest>$timepicker.earliest$</earliest>
+        <latest>$timepicker.latest$</latest>
+      </search>
+      <fieldForLabel>id.orig_h</fieldForLabel>
+      <fieldForValue>id.orig_h</fieldForValue>
+    </input>
+    <input type="dropdown" token="sourceport_tok" searchWhenChanged="true">
+      <label>Source Port:</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <fieldForLabel>id.orig_p</fieldForLabel>
+      <fieldForValue>id.orig_p</fieldForValue>
+      <search>
+        <query>sourcetype=BASE id.orig_h=$sourceip_tok$ id.resp_h=$destinationip_tok$ id.resp_p=$destinationport_tok$ | stats count by id.orig_p</query>
+        <earliest>$timepicker.earliest$</earliest>
+        <latest>$timepicker.latest$</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
+      <label>Destination IP:</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <fieldForLabel>id.resp_h</fieldForLabel>
+      <fieldForValue>id.resp_h</fieldForValue>
+      <search>
+        <query>sourcetype=BASE id.orig_h=$sourceip_tok$ id.orig_p=$sourceport_tok$ id.resp_p=$destinationport_tok$ | stats count by id.resp_h</query>
+        <earliest>$timepicker.earliest$</earliest>
+        <latest>$timepicker.latest$</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
+      <label>Destination Port:</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <fieldForLabel>id.resp_p</fieldForLabel>
+      <fieldForValue>id.resp_p</fieldForValue>
+      <search>
+        <query>sourcetype=BASE id.orig_h=$sourceip_tok$ id.orig_p=$sourceport_tok$ id.resp_h=$destinationip_tok$ | stats count by id.resp_p</query>
+        <earliest>$timepicker.earliest$</earliest>
+        <latest>$timepicker.latest$</latest>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <html>
+        <h1>Input selections: SIP:$sourceip_tok$, SPRT:$sourceport_tok$, DIP:$destinationip_tok$, DPRT:$destinationport_tok$</h1>
+        <h2>To edit, ctrl+f twice to pull up find and replace and replace BASE with the source type, BASE DASHBOARD with the dashboard name, and BASE PANEL with the log type.</h2>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>BASE PANEL - Log Count</title>
+      <single>
+        <search>
+          <query>sourcetype="BASE" id.orig_h=$sourceip_tok$ id.orig_p=$sourceport_tok$ id.resp_h=$destinationip_tok$ id.resp_p=$destinationport_tok$
+| stats count(_raw)</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">247</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>BASE PANEL - Log Count Over Time</title>
+      <chart>
+        <search>
+          <query>sourcetype="BASE" id.orig_h=$sourceip_tok$ id.orig_p=$sourceport_tok$ id.resp_h=$destinationip_tok$ id.resp_p=$destinationport_tok$
+| timechart count(_raw)</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="charting.axisTitleY.text">Logs</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>BASE PANEL - Logs</title>
+      <table>
+        <search>
+          <query>sourcetype=BASE id.orig_h=$sourceip_tok$ id.orig_p=$sourceport_tok$ id.resp_h=$destinationip_tok$ id.resp_p=$destinationport_tok$
+| table _time,uid,id.orig_h,id.orig_p,id.resp_h,id.resp_p 
+| sort -_time</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+</form>
