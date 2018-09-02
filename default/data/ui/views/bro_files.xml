@@ -1,0 +1,235 @@
+<form>
+  <label>Bro Files</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="timepicker" searchWhenChanged="true">
+      <label>Select Time</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="radio" token="auto_refresh" searchWhenChanged="true">
+      <label>Auto Refresh</label>
+      <choice value="5s">5 Seconds</choice>
+      <choice value="30s">30 Seconds</choice>
+      <choice value="1m">1 Minute</choice>
+      <choice value="2m">2 Minutes</choice>
+      <choice value="5m">5 minutes</choice>
+    </input>
+    <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
+      <label>Source IP:</label>
+      <default>*</default>
+      <choice value="*">All</choice>
+      <search>
+        <query>sourcetype=bro_files dest=$destinationip_tok$ | stats count by src</query>
+        <earliest>$selection.earliest$</earliest>
+        <latest>$selection.latest$</latest>
+      </search>
+      <fieldForLabel>src</fieldForLabel>
+      <fieldForValue>src</fieldForValue>
+    </input>
+    <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
+      <label>Destination IP:</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <fieldForLabel>dest</fieldForLabel>
+      <fieldForValue>dest</fieldForValue>
+      <search>
+        <query>sourcetype=bro_files src=$sourceip_tok$ | stats count by dest</query>
+        <earliest>$selection.earliest$</earliest>
+        <latest>$selection.latest$</latest>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <html>
+        <h1>Input selections: SIP:$sourceip_tok$, DIP:$destinationip_tok$</h1>
+        <h1>Using Time: $selEarlier$ to $selLater$</h1>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Filess - Log Count</title>
+      <single>
+        <search>
+          <query>sourcetype="bro_files" src=$sourceip_tok$ dest=$destinationip_tok$
+| stats count(_raw)</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">247</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Filess - Log Count Over Time</title>
+      <chart>
+        <search>
+          <query>sourcetype="bro_files" src=$sourceip_tok$ dest=$destinationip_tok$
+| timechart count(_raw)</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="charting.axisTitleY.text">Logs</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <selection>
+          <set token="selection.earliest">$start$</set>
+          <set token="selection.latest">$end$</set>
+          <eval token="selEarlier">strftime($start$,"%Y/%m/%d %H:%M:%S %p")</eval>
+          <eval token="selLater">strftime($end$,"%Y/%m/%d %H:%M:%S %p")</eval>
+        </selection>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Files - MIME Type (Bar Chart)</title>
+      <chart>
+        <search>
+          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
+| stats count by mime_type
+| sort -count</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">45</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.drilldown">all</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Files - Source IP Address</title>
+      <table>
+        <search>
+          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
+| stats count by src,conn_uids{}
+| sort -count
+| rename src as "Transfer IP", conn_uids{} as uid</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="src">
+            <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+			    <condition field="uid">
+            <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+		    </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>Files - Files By Size</title>
+      <table>
+        <search>
+          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
+| stats sum(seen_bytes) as totalBytes by conn_uids{}
+| eval volume_converted=case( 
+     totalBytes&gt;=(1024*1024*1024*1024),round(totalBytes/(1024*1024*1024*1024),0)."TB",
+     totalBytes&gt;=(1024*1024*1024),round(totalBytes/(1024*1024*1024),0)."GB",
+     totalBytes&gt;=(1024*1024),round(totalBytes/(1024*1024),0)."MB",
+ totalBytes&gt;=1024,round(totalBytes/1024,0)."KB",
+ 1=1,totalBytes."B")
+| sort -totalBytes
+| rename  volume_converted as "Total Bytes" totalBytes as "Bytes"  conn_uids{} as "Files UIDs"</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>FIles - Destination IP Address</title>
+      <table>
+        <search>
+          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
+| stats count by dest,conn_uids{}
+| sort -count
+| rename conn_uids{} as uid</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="dest">
+            <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+			    <condition field="uid">
+            <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+		    </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>Files - MIME Type</title>
+      <chart>
+        <search>
+          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
+| stats count by mime_type</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Files - Logs</title>
+      <table>
+        <search>
+          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$  
+| table _time,src,dest,conn_uids{}
+| sort -_time
+| rename conn_uids{} as uid</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="src">
+            <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+        
+          <condition field="dest">
+            <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+
+          <condition field="uid">
+            <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</form>

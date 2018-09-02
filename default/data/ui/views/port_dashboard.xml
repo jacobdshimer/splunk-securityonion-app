@@ -1,0 +1,263 @@
+<dashboard>
+  <label>Port Dashboard</label>
+  <row>
+    <panel>
+      <html>
+        <h1>Port $port$</h1>
+        <h1>Using Time: $earliest$ to $latest$</h1>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Data Types</title>
+      <table>
+        <search>
+          <query>(src_port=$port$ OR dest_port=$port$) 
+| stats count by sourcetype
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Sensors - Sensor and Services</title>
+      <table>
+        <search>
+          <query> (src_port=$port$ OR dest_port=$port$)
+| stats count by service, sensorname
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>NIDS - Alerts</title>
+      <table>
+        <search>
+          <query>sourcetype=sguild OR (src_port=$port$ OR dest_port=$port$)
+| stats count by rule_name
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Notices - Notice Type</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_notice"  (src_port=$port$ OR dest_port=$port$)
+| stats count by note
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>OSSEC - Alerts</title>
+      <table>
+        <search>
+          <query>sourcetype="ossec"  
+| table _time, alert_reason, src_ip, dest_ip
+| sort -_time</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>SSL - Server</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_ssl"  (src_port=$port$ OR dest_port=$port$)
+| stats count by server_name
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <search>
+          <query>sourcetype="bro_dns"  (src_port=$port$ OR dest_port=$port$)
+| stats count by id.resp_h
+| sort -count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>DNS - Query Class</title>
+      <chart>
+        <search>
+          <query>sourcetype="bro_dns"   (src_port=$port$ OR dest_port=$port$)
+| stats count by qclass_name</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>DNS - Type</title>
+      <chart>
+        <search>
+          <query>sourcetype="bro_dns"   (src_port=$port$ OR dest_port=$port$)
+| stats count by qtype_name</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>DNS - Query/Answer</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_dns"   (src_port=$port$ OR dest_port=$port$)
+| stats count by id.resp_h
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>HTTP - MIME Type</title>
+      <chart>
+        <search>
+          <query>sourcetype="bro_http"   (src_port=$port$ OR dest_port=$port$)
+| stats count by resp_mime_types{}</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>HTTP - Source IP Address</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_http"   (src_port=$port$ OR dest_port=$port$)
+| stats count by id.orig_h
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+    <panel>
+      <title>HTTP - Destination IP Address</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_http"   (src_port=$port$ OR dest_port=$port$)
+| stats count by id.resp_h
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+    <panel>
+      <title>HTTP - Destination Port</title>
+      <chart>
+        <search>
+          <query>sourcetype="bro_http"   (src_port=$port$ OR dest_port=$port$)
+| stats count by id.resp_p
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>HTTP - Sites</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_http"   (src_port=$port$ OR dest_port=$port$)
+| stats count by website_name 
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+    <panel>
+      <title>HTTP - Sites Hosting EXEs</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_http"   (src_port=$port$ OR dest_port=$port$) "resp_mime_types{}"="application/x-dosexec"
+| stats count by website_name
+| sort -count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>All Logs</title>
+      <table>
+        <search>
+          <query>  (src_port=$port$ OR dest_port=$port$)
+| table _time, id.orig_h, id.orig_p, id.resp_h, id.resp_p, uid
+| sort -_time</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

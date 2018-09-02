@@ -1,0 +1,394 @@
+[app/ui]
+version = 7.1.1
+modtime = 1534855532.252558000
+
+[app/launcher]
+version = 7.1.1
+modtime = 1534855532.287739100
+
+[views/home]
+owner = admin
+version = 7.1.1
+modtime = 1534948788.759954300
+
+[views/bro_connections]
+owner = admin
+version = 7.1.1
+modtime = 1535632127.342683000
+
+[views/bro_dcerpc]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535336161.645816900
+
+[views/bro_dns]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535337906.724278700
+
+[views/base_dashboard]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535648450.551290700
+
+[views/bro_ftp]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535338885.292459900
+
+[views/bro_weird]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535042490.649804700
+
+[views/bro_http]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535653446.581421200
+
+[views/bro_dhcp]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535336444.999425900
+
+[views/bro_dnp3]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535337462.021591200
+
+[views/bro_intel]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535652485.361341900
+
+[views/bro_irc]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535654290.330232200
+
+[views/bro_kerberos]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535654254.326421700
+
+[views/bro_modbus]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535649863.412918100
+
+[views/bro_mysql]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134262.533335000
+
+[views/bro_ntlm]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134281.837655100
+
+[views/bro_pe]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134306.722301600
+
+[views/bro_radius]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134322.811992300
+
+[views/bro_rdp]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134349.855995600
+
+[views/bro_rfp]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134361.234823300
+
+[views/bro_sip]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134372.494914900
+
+[views/bro_smb]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134383.858819000
+
+[views/bro_smtp]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535657475.822400100
+
+[views/bro_snmp]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134411.032454400
+
+[views/bro_software]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535649472.114920100
+
+[views/bro_ssl]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134431.751843000
+
+[views/bro_ssh]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134440.248150900
+
+[views/bro_syslog]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134467.105008700
+
+[views/bro_tunnels]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535649583.754277100
+
+[views/bro_x509]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134484.621895900
+
+[views/bro_notice]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134529.813547600
+
+[views/hids]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134536.956913800
+
+[views/nids]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535134543.464171500
+
+[views/bro_files]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535338910.429937800
+
+[app/install/install_source_checksum]
+version = 7.1.1
+modtime = 1535374357.709147500
+
+[inputs/splunktcp%3A%2F%2F9997]
+owner = admin
+version = 7.1.2
+modtime = 1535162174.774536000
+
+[props/bro_conn/EVAL-startTime]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535478341.621365900
+
+[props/bro_conn/EVAL-endTime]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535478348.385619700
+
+[workflow_actions/Capme]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535389623.859540200
+
+[views/host_base_dashboard]
+owner = admin
+version = 7.1.1
+modtime = 1535469991.348793400
+
+[props/ossec/EXTRACT-src_ip%2Cdest_ip]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535244077.036204800
+
+[props/ossec/EXTRACT-alert_reason]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535244198.565090900
+
+[props/bro_http/EXTRACT-website_name]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535650167.793293300
+
+[views/port_dashboard]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535310290.888988200
+
+[views/uid_dashboard]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535310329.067252800
+
+[props/bro_ssl/FIELDALIAS-bro_ssl]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535310561.081824000
+
+[props/bro_syslog/FIELDALIAS-bro_syslog]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535310575.270902300
+
+[props/bro_weird/FIELDALIAS-bro_weird]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.2
+modtime = 1535310590.693331100
+
+[props/sguild/FIELDALIAS-sguild-name%20as%20rule_name]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535570316.190332200
+
+[props/bro_conn/FIELDALIAS-bro_conn]
+version = 7.1.2
+modtime = 1535332749.713622300
+
+[props/bro_conn/LOOKUP-conn_state]
+version = 7.1.1
+modtime = 1535376525.732662200
+
+[props/bro_conn/LOOKUP-orig_country_name]
+version = 7.1.1
+modtime = 1535388081.173394700
+
+[transforms/cif_domain]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 7.1.1
+modtime = 1535387550.577119600
+
+[transforms/cif_infrastructure]
+export = system
+owner = admin
+version = 7.1.1
+modtime = 1535387543.594992400
+
+[transforms/cif_url]
+export = system
+owner = admin
+version = 7.1.1
+modtime = 1535387558.214051100
+
+[transforms/conn_state]
+export = system
+owner = admin
+version = 7.1.1
+modtime = 1535387564.136209900
+
+[props/bro_conn/LOOKUP-resp_country_name]
+version = 7.1.1
+modtime = 1535388058.786655300
+
+[indexes/test]
+owner = admin
+version = 7.1.1
+modtime = 1535549424.105079700
+
+[props/sguild]
+version = 7.1.1
+modtime = 1535559315.591751500
+
+[views/test]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 7.1.1
+modtime = 1535648065.933770100
