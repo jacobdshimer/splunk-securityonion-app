@@ -59,7 +59,7 @@
       <fieldForLabel>dest_port</fieldForLabel>
       <fieldForValue>dest_port</fieldForValue>
       <search>
-        <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationip_tok$ | stats count by dest_port</query>
+        <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ | stats count by dest_port</query>
         <earliest>$selection.earliest$</earliest>
         <latest>$selection.latest$</latest>
       </search>
@@ -69,13 +69,13 @@
     <panel>
       <html>
         <h1>Input selections: SIP:$sourceip_tok$, SPRT:$sourceport_tok$, DIP:$destinationip_tok$, DPRT:$destinationport_tok$</h1>
-        <h1>Using Time: $selEarlier$ to $selLater$</h1>
+        <h1>Using Time: $selEarlier$ to $selLater$</h1>       
       </html>
     </panel>
   </row>
   <row>
     <panel>
-      <title>DNS - Log Count</title>
+      <title>Bro DNS - Log Count</title>
       <single>
         <search>
           <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
@@ -90,7 +90,7 @@
       </single>
     </panel>
     <panel>
-      <title>DNS - Log Count Over Time</title>
+      <title>Bro DNS - Log Count Over Time</title>
       <chart>
         <search>
           <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
@@ -114,13 +114,12 @@
   </row>
   <row>
     <panel>
-      <title>DNS - Query Class</title>
+      <title>DNS - Query Class (Pie Chart)</title>
       <chart>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by qclass_name</query>
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by qclass_name</query>
           <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <latest>$selection.latest$</latest>
         </search>
         <option name="charting.chart">pie</option>
         <option name="charting.drilldown">none</option>
@@ -130,19 +129,14 @@
       <title>DNS - Destination Port (Horizontal Bar Chart)</title>
       <chart>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by dest_port</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by dest_port | sort -count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
         </search>
-        <option name="count">10</option>
-        <option name="drilldown">cell</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.drilldown">none</option>
         <option name="refresh.display">progressbar</option>
-        <drilldown>
-          <condition field="dest_port">
-            <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
-          </condition>
-		</drilldown>
       </chart>
     </panel>
   </row>
@@ -151,23 +145,28 @@
       <title>DNS - Query Type (Pie Chart)</title>
       <chart>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
 | stats count by qtype_name</query>
           <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <latest>$selection.latest$</latest>
         </search>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.chart">pie</option>
         <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="trellis.enabled">0</option>
       </chart>
     </panel>
     <panel>
       <title>DNS - Protocol (Vertical Bar Chart)</title>
       <chart>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
 | stats count by proto</query>
           <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <latest>$selection.latest$</latest>
         </search>
         <option name="charting.chart">column</option>
         <option name="charting.drilldown">none</option>
@@ -176,15 +175,41 @@
   </row>
   <row>
     <panel>
+      <title>DNS - Client</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+| stats count by src | sort -count</query>
+          <earliest>$selection.earliest$</earliest>
+        <latest>$selection.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <title>DNS - Server</title>
+      <table>
+        <search>
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+| stats count by dest | sort -count</query>
+          <earliest>$selection.earliest$</earliest>
+        <latest>$selection.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
       <title>DNS - Queries</title>
       <table>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by query
-| rename query as Query
-| sort -count</query>
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+| stats count by query | sort -count</query>
           <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <latest>$selection.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -195,44 +220,38 @@
       <title>DNS - Answers</title>
       <table>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by answers{}
-| rename answers{} as Answers
-| sort -count</query>
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+| stats count by answers{} | sort -count</query>
           <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <latest>$selection.latest$</latest>
         </search>
-        <option name="count">10</option>
         <option name="drilldown">none</option>
-        <option name="refresh.display">progressbar</option>
       </table>
     </panel>
   </row>
   <row>
     <panel>
-      <title>DNS - Queries/Answers</title>
+      <title>DNS - Query/Answer</title>
       <table>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by query,answers{}
-| rename query as Queries, answers{} as Answers
+          <query>sourcetype="bro_dns" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+| stats count by query,answers{} 
 | sort -count</query>
           <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <latest>$selection.latest$</latest>
         </search>
-        <option name="count">10</option>
         <option name="drilldown">none</option>
-        <option name="refresh.display">progressbar</option>
       </table>
     </panel>
   </row>
-    <row>
+  <row>
     <panel>
-      <title>DNS - Logs</title>
+      <title>Bro DNS - Logs</title>
       <table>
+        <title>Click an IP, port or UID to drilldown into all sources.</title>
         <search>
-          <query>sourcetype=bro_dns src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| table _time,src,src_port,dest,dest_port,uid
+          <query>sourcetype=bro_dcerpc src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
+| table _time,src,src_port,dest,dest_port,uid,spid 
 | sort -_time</query>
           <earliest>$selection.earliest$</earliest>
           <latest>$selection.latest$</latest>
@@ -241,22 +260,21 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
+          <condition field="spid">
+            <link target="_blank">https://192.168.126.129/capme/splunk.php?spid=$row.spid$</link>
+          </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-        
           <condition field="dest">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-            
           <condition field="src_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.src_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-          
           <condition field="dest_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.dest_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-          
           <condition field="uid">
             <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>

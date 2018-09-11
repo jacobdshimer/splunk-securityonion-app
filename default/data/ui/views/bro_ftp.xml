@@ -245,7 +245,7 @@
       <table>
         <search>
           <query>sourcetype=bro_ftp src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| table _time,src,src_port,dest,dest_port,uid 
+| table _time,src,src_port,dest,dest_port,uid,spid 
 | sort -_time</query>
           <earliest>$selection.earliest$</earliest>
           <latest>$selection.latest$</latest>
@@ -254,6 +254,9 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
+          <condition field="spid">
+            <link target="_blank">https://192.168.126.129/capme/splunk.php?spid=$row.spid$</link>
+          </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
