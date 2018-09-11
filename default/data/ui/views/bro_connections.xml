@@ -424,7 +424,11 @@
       <table>
         <search>
           <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
+<<<<<<< HEAD
 | table _time,src,src_port,dest,dest_port, uid, spid
+=======
+| table _time,src,src_port,dest,dest_port, uid, id
+>>>>>>> 947b17bf9968ac2bffb1dc92b49a8578688ca08b
 | sort -_time</query>
           <earliest>$selection.earliest$</earliest>
           <latest>$selection.latest$</latest>
@@ -433,8 +437,13 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
+<<<<<<< HEAD
           <condition field="spid">
             <link target="_blank">https://192.168.126.129/capme/splunk.php?spid=$row.spid$</link>
+=======
+          <condition field="id">
+            <link target="_blank">https://192.168.235.137/capme/splunk.php?spid=$row.id$</link>
+>>>>>>> 947b17bf9968ac2bffb1dc92b49a8578688ca08b
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_base_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
