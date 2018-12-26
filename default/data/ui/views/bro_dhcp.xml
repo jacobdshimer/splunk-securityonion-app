@@ -1,70 +1,110 @@
 <form>
+  <search id="formInput">
+    <query>sourcetype=bro_dhcp src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ $search_token$ | table src src_port dest dest_port</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=bro_dhcp src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ $search_token$ | table _time, uid, spid, src, src_port, dest, dest_port, assigned_ip, mac</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <label>Bro DHCP</label>
-  <fieldset submitButton="false" autoRun="true">
-    <input type="time" token="timepicker" searchWhenChanged="true">
-      <label>Select Time</label>
-      <default>
-        <earliest>-24h@h</earliest>
-        <latest>now</latest>
-      </default>
-    </input>
-    <input type="radio" token="auto_refresh" searchWhenChanged="true">
-      <label>Auto Refresh</label>
-      <choice value="5s">5 Seconds</choice>
-      <choice value="30s">30 Seconds</choice>
-      <choice value="1m">1 Minute</choice>
-      <choice value="2m">2 Minutes</choice>
-      <choice value="5m">5 minutes</choice>
-    </input>
-    <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
-      <label>Source IP:</label>
-      <default>*</default>
-      <choice value="*">All</choice>
-      <search>
-        <query>sourcetype=bro_dhcp src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-      <fieldForLabel>src</fieldForLabel>
-      <fieldForValue>src</fieldForValue>
-    </input>
-    <input type="dropdown" token="sourceport_tok" searchWhenChanged="true">
-      <label>Source Port:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>src_port</fieldForLabel>
-      <fieldForValue>src_port</fieldForValue>
-      <search>
-        <query>sourcetype=bro_dhcp src=$sourceip_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src_port</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-    <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
-      <label>Destination IP:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>dest</fieldForLabel>
-      <fieldForValue>dest</fieldForValue>
-      <search>
-        <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | stats count by dest</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-    <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
-      <label>Destination Port:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>dest_port</fieldForLabel>
-      <fieldForValue>dest_port</fieldForValue>
-      <search>
-        <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationip_tok$ | stats count by dest_port</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-  </fieldset>
+  <fieldset submitButton="false" autoRun="true"></fieldset>
+  <row>
+    <panel>
+      <title>Time Inputs</title>
+      <input type="time" token="timepicker" searchWhenChanged="true">
+        <label>Select Time</label>
+        <default>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </default>
+      </input>
+      <input type="radio" token="auto_refresh" searchWhenChanged="true">
+        <label>Auto Refresh</label>
+        <choice value="5s">5 Seconds</choice>
+        <choice value="30s">30 Seconds</choice>
+        <choice value="1m">1 Minute</choice>
+        <choice value="2m">2 Minutes</choice>
+        <choice value="5m">5 minutes</choice>
+      </input>
+    </panel>
+    <panel>
+      <title>IP and Port Fields Filtering</title>
+      <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
+        <label>Source IP:</label>
+        <default>*</default>
+        <choice value="*">All</choice>
+        <search base="formInput">
+          <query>| stats count by src</query>
+        </search>
+        <fieldForLabel>src</fieldForLabel>
+        <fieldForValue>src</fieldForValue>
+      </input>
+      <input type="dropdown" token="sourceport_tok" searchWhenChanged="true">
+        <label>Source Port:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>src_port</fieldForLabel>
+        <fieldForValue>src_port</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by src_port</query>
+        </search>
+      </input>
+      <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
+        <label>Destination IP:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>dest</fieldForLabel>
+        <fieldForValue>dest</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by dest</query>
+        </search>
+      </input>
+      <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
+        <label>Destination Port:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>dest_port</fieldForLabel>
+        <fieldForValue>dest_port</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by dest_port</query>
+        </search>
+      </input>
+    </panel>
+    <panel>
+      <title>Custom Filtering - Currently only one field at a time</title>
+      <input type="dropdown" token="field" searchWhenChanged="true">
+        <label>Select a Field:</label>
+        <fieldForLabel>field</fieldForLabel>
+        <fieldForValue>field</fieldForValue>
+        <search>
+          <query>sourcetype="bro_dhcp" | fieldsummary | table field</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <initialValue>uid</initialValue>
+      </input>
+      <input type="multiselect" token="search_token" searchWhenChanged="true">
+        <label>Search Terms</label>
+        <prefix>(</prefix>
+        <suffix>)</suffix>
+        <delimiter> OR  </delimiter>
+        <choice value="*">All</choice>
+        <valuePrefix>$field$="</valuePrefix>
+        <valueSuffix>"</valueSuffix>
+        <fieldForLabel>$field$</fieldForLabel>
+        <fieldForValue>$field$</fieldForValue>
+        <search>
+          <query>sourcetype=bro_dhcp | stats count by $field$</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <initialValue>*</initialValue>
+      </input>
+    </panel>
+  </row>
   <row>
     <panel>
       <html>
@@ -116,13 +156,9 @@
     <panel>
       <title>DHCP - IP to MAC</title>
       <table>
-        <search>
-          <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| table _time assigned_ip mac src dest
-| sort - _time
+        <search base="baseSearch">
+          <query>| table _time assigned_ip mac src dest | sort - _time
 | rename assigned_ip as "Assigned IP" mac as Mac src as "Requester IP" dest as "DHCP Server"</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -134,12 +170,8 @@
     <panel>
       <title>DHCP - Source IP Address</title>
       <table>
-        <search>
-          <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by src
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by src | sort -count</query>
         </search>
         <option name="drilldown">cell</option>
         <drilldown>
@@ -152,12 +184,8 @@
     <panel>
       <title>DHCP - Destination IP Address</title>
       <table>
-        <search>
-          <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by dest
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by dest | sort -count</query>
         </search>
         <option name="drilldown">cell</option>
         <drilldown>
@@ -170,12 +198,8 @@
     <panel>
       <title>DHCP - Destination Port</title>
       <table>
-        <search>
-          <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by dest_port
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by dest_port | sort -count</query>
         </search>
         <option name="drilldown">cell</option>
         <drilldown>
@@ -190,20 +214,13 @@
     <panel>
       <title>DHCP - Logs</title>
       <table>
-        <search>
-          <query>sourcetype=bro_dhcp src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| table _time,src,src_port,dest,dest_port,uid,spid 
-| sort -_time</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| table _time,src,src_port,dest,dest_port,uid,spid | sort -_time</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-          <condition field="spid">
-            <link target="_blank">https://192.168.126.129/capme/splunk.php?spid=$row.spid$</link>
-          </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>

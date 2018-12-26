@@ -1,5 +1,15 @@
 <form>
   <label>BASE DASHBOARD</label>
+  <search id="formInput">
+    <query>sourcetype=BASE src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table src src_port dest dest_port</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=BASE src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table uid, src, src_port, dest, dest_port, bytes, proto, bytes_in, bytes_out, missed_bytes, conn_state, conn_desc</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="timepicker" searchWhenChanged="true">
       <label>Select Time</label>
@@ -20,10 +30,8 @@
       <label>Source IP:</label>
       <default>*</default>
       <choice value="*">All</choice>
-      <search>
-        <query>sourcetype=BASE src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src</query>
-        <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+      <search base="formInput">
+        <query>| stats count by src</query>
       </search>
       <fieldForLabel>src</fieldForLabel>
       <fieldForValue>src</fieldForValue>
@@ -34,10 +42,8 @@
       <default>*</default>
       <fieldForLabel>src_port</fieldForLabel>
       <fieldForValue>src_port</fieldForValue>
-      <search>
-        <query>sourcetype=BASE src=$sourceip_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src_port</query>
-        <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+      <search base="formInput">
+        <query>| stats count by src_port</query>
       </search>
     </input>
     <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
@@ -46,10 +52,8 @@
       <default>*</default>
       <fieldForLabel>dest</fieldForLabel>
       <fieldForValue>dest</fieldForValue>
-      <search>
-        <query>sourcetype=BASE src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | stats count by dest</query>
-        <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+      <search base="formInput">
+        <query>| stats count by dest</query>
       </search>
     </input>
     <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
@@ -58,10 +62,8 @@
       <default>*</default>
       <fieldForLabel>dest_port</fieldForLabel>
       <fieldForValue>dest_port</fieldForValue>
-      <search>
-        <query>sourcetype=BASE src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ | stats count by dest_port</query>
-        <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+      <search base="formInput">
+        <query>| stats count by dest_port</query>
       </search>
     </input>
   </fieldset>
@@ -70,7 +72,7 @@
       <html>
         <h1>Input selections: SIP:$sourceip_tok$, SPRT:$sourceport_tok$, DIP:$destinationip_tok$, DPRT:$destinationport_tok$</h1>
         <h1>Using Time: $selEarlier$ to $selLater$</h1>       
-		<h2>To edit, ctrl+f twice to pull up find and replace and replace BASE with the source type, BASE DASHBOARD with the dashboard name, and BASE PANEL with the log type.</h2>
+		<h2>To edit, ctrl+f twice to pull up find and replace and replace BASE DASHBOARD with the dashboard name, BASE PANEL with the log type, and BASE with the source type.</h2>
       </html>
     </panel>
   </row>

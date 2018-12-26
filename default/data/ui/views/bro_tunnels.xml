@@ -1,4 +1,14 @@
 <form>
+  <search id="formInput">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table src src_port dest dest_port</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table uid, src, src_port, dest, dest_port, bytes, proto, bytes_in, bytes_out, missed_bytes, conn_state, conn_desc</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <label>Bro Tunnels</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="timepicker" searchWhenChanged="true">

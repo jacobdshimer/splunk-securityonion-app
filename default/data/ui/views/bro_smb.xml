@@ -1,4 +1,14 @@
 <form>
+  <search id="formInput">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table src src_port dest dest_port</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table uid, src, src_port, dest, dest_port, bytes, proto, bytes_in, bytes_out, missed_bytes, conn_state, conn_desc</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <label>Bro SMB</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="timepicker" searchWhenChanged="true">
@@ -23,7 +33,7 @@
       <search>
         <query>sourcetype=bro_smb* src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src</query>
         <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
+          <latest>$selection.latest$</latest>
       </search>
       <fieldForLabel>src</fieldForLabel>
       <fieldForValue>src</fieldForValue>
@@ -37,7 +47,7 @@
       <search>
         <query>sourcetype=bro_smb* src=$sourceip_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src_port</query>
         <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
+          <latest>$selection.latest$</latest>
       </search>
     </input>
     <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
@@ -49,7 +59,7 @@
       <search>
         <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | stats count by dest</query>
         <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
+          <latest>$selection.latest$</latest>
       </search>
     </input>
     <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
@@ -61,7 +71,7 @@
       <search>
         <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ | stats count by dest_port</query>
         <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
+          <latest>$selection.latest$</latest>
       </search>
     </input>
   </fieldset>
@@ -69,7 +79,8 @@
     <panel>
       <html>
         <h1>Input selections: SIP:$sourceip_tok$, SPRT:$sourceport_tok$, DIP:$destinationip_tok$, DPRT:$destinationport_tok$</h1>
-        <h1>Using Time: $selEarlier$ to $selLater$</h1>       
+        <h1>Using Time: $selEarlier$ to $selLater$</h1>
+		<h2>To edit, ctrl+f twice to pull up find and replace and replace bro_smb* with the source type, bro_smb* DASHBOARD with the dashboard name, and SMB with the log type.</h2>
       </html>
     </panel>
   </row>
@@ -114,114 +125,12 @@
   </row>
   <row>
     <panel>
-      <title>SMB - File Name</title>
-      <table>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by name
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="drilldown">none</option>
-      </table>
-    </panel>
-    <panel>
-      <title>SMB - Action (Pie Chart)</title>
-      <chart>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by action
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="charting.chart">pie</option>
-        <option name="charting.drilldown">none</option>
-        <option name="refresh.display">progressbar</option>
-      </chart>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>SMB - FIle Path</title>
-      <table>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by path
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="drilldown">none</option>
-      </table>
-    </panel>
-    <panel>
-      <title>SMB - Destination Port (Horizontal Bar Chart)</title>
-      <chart>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by dest_port
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="charting.chart">bar</option>
-        <option name="charting.drilldown">none</option>
-      </chart>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>SMB - Source IP Address</title>
-      <table>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by src
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="drilldown">none</option>
-      </table>
-    </panel>
-    <panel>
-      <title>SMB - Destination IP Address</title>
-      <table>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by dest
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="drilldown">none</option>
-      </table>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>SMB - File/Path Summary</title>
-      <table>
-        <search>
-          <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by path,name,action,src,dest
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
-        </search>
-        <option name="drilldown">none</option>
-      </table>
-    </panel>
-  </row>
-  <row>
-    <panel>
       <title>SMB - Logs</title>
       <table>
         <title>Click an IP, port or UID to drilldown into all sources.</title>
         <search>
           <query>sourcetype=bro_smb* src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| table _time,src,src_port,dest,dest_port,uid,spid 
+| table _time,src,src_port,dest,dest_port,uid
 | sort -_time</query>
           <earliest>$selection.earliest$</earliest>
           <latest>$selection.latest$</latest>
@@ -230,21 +139,22 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-          <condition field="spid">
-            <link target="_blank">https://192.168.126.129/capme/splunk.php?spid=$row.spid$</link>
-          </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
+
           <condition field="dest">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
+
           <condition field="src_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.src_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
+
           <condition field="dest_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.dest_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
+
           <condition field="uid">
             <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>

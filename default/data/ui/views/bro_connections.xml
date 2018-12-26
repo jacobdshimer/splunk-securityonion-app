@@ -1,70 +1,113 @@
 <form>
+  <search id="formInput">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ $search_token$ | table src src_port dest dest_port</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ $search_token$ | table _time, uid, spid, src, src_port, dest, dest_port, bytes, proto, bytes_in, bytes_out, missed_bytes, conn_state, conn_desc</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <label>Bro Connections</label>
-  <fieldset submitButton="false" autoRun="true">
-    <input type="time" token="timepicker" searchWhenChanged="true">
-      <label>Select Time</label>
-      <default>
-        <earliest>-24h@h</earliest>
-        <latest>now</latest>
-      </default>
-    </input>
-    <input type="radio" token="auto_refresh" searchWhenChanged="true">
-      <label>Auto Refresh</label>
-      <choice value="5s">5 Seconds</choice>
-      <choice value="30s">30 Seconds</choice>
-      <choice value="1m">1 Minute</choice>
-      <choice value="2m">2 Minutes</choice>
-      <choice value="5m">5 minutes</choice>
-    </input>
-    <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
-      <label>Source IP:</label>
-      <default>*</default>
-      <choice value="*">All</choice>
-      <search>
-        <query>sourcetype=bro_conn src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-      <fieldForLabel>src</fieldForLabel>
-      <fieldForValue>src</fieldForValue>
-    </input>
-    <input type="dropdown" token="sourceport_tok" searchWhenChanged="true">
-      <label>Source Port:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>src_port</fieldForLabel>
-      <fieldForValue>src_port</fieldForValue>
-      <search>
-        <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ | stats count by src_port</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-    <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
-      <label>Destination IP:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>dest</fieldForLabel>
-      <fieldForValue>dest</fieldForValue>
-      <search>
-        <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | stats count by dest</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-    <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
-      <label>Destination Port:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>dest_port</fieldForLabel>
-      <fieldForValue>dest_port</fieldForValue>
-      <search>
-        <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest_port=$destinationip_tok$ | stats count by dest_port</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-  </fieldset>
+  <fieldset submitButton="false" autoRun="true"></fieldset>
+  <row>
+    <panel>
+      <title>Time Inputs</title>
+      <input type="time" token="timepicker" searchWhenChanged="true">
+        <label>Select Time</label>
+        <default>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </default>
+      </input>
+      <input type="radio" token="auto_refresh" searchWhenChanged="true">
+        <label>Auto Refresh</label>
+        <choice value="5s">5 Seconds</choice>
+        <choice value="30s">30 Seconds</choice>
+        <choice value="1m">1 Minute</choice>
+        <choice value="2m">2 Minutes</choice>
+        <choice value="5m">5 minutes</choice>
+      </input>
+    </panel>
+    <panel>
+      <title>IP and Port Fields Filtering</title>
+      <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
+        <label>Source IP:</label>
+        <default>*</default>
+        <choice value="*">All</choice>
+        <search base="formInput">
+          <query>| stats count by src</query>
+        </search>
+        <fieldForLabel>src</fieldForLabel>
+        <fieldForValue>src</fieldForValue>
+      </input>
+      <input type="dropdown" token="sourceport_tok" searchWhenChanged="true">
+        <label>Source Port:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>src_port</fieldForLabel>
+        <fieldForValue>src_port</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by src_port</query>
+        </search>
+      </input>
+      <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
+        <label>Destination IP:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>dest</fieldForLabel>
+        <fieldForValue>dest</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by dest</query>
+        </search>
+      </input>
+      <input type="dropdown" token="destinationport_tok" searchWhenChanged="true">
+        <label>Destination Port:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>dest_port</fieldForLabel>
+        <fieldForValue>dest_port</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by dest_port</query>
+        </search>
+      </input>
+    </panel>
+    <panel>
+      <title>Custom Filtering - Currently only one field at a time</title>
+      <input type="dropdown" token="field" searchWhenChanged="true">
+        <label>Select a Field:</label>
+        <fieldForLabel>field</fieldForLabel>
+        <fieldForValue>field</fieldForValue>
+        <search>
+          <query>sourcetype="bro_conn"
+| fieldsummary
+| table field</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <initialValue>uid</initialValue>
+      </input>
+      <input type="multiselect" token="search_token" searchWhenChanged="true">
+        <label>Search Terms</label>
+        <prefix>(</prefix>
+        <suffix>)</suffix>
+        <delimiter> OR  </delimiter>
+        <choice value="*">All</choice>
+        <valuePrefix>$field$="</valuePrefix>
+        <valueSuffix>"</valueSuffix>
+        <fieldForLabel>$field$</fieldForLabel>
+        <fieldForValue>$field$</fieldForValue>
+        <search>
+          <query>sourcetype=bro_conn
+| stats count by $field$</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <initialValue>*</initialValue>
+      </input>
+    </panel>
+  </row>
   <row>
     <panel>
       <html>
@@ -116,19 +159,16 @@
     <panel>
       <title>Connections - Top 10 - Total Bytes By Connection</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| table uid src src_port dest dest_port bytes
-| eval volume_converted=case( 
-     bytes&gt;=(1024*1024*1024*1024),round(bytes/(1024*1024*1024*1024),0)."TB",
-     bytes&gt;=(1024*1024*1024),round(bytes/(1024*1024*1024),0)."GB",
-     bytes&gt;=(1024*1024),round(bytes/(1024*1024),0)."MB",
- bytes&gt;=1024,round(bytes/1024,0)."KB",
- 1=1,bytes."B")
-| rename  volume_converted as "Total Bytes"
-| sort 10 -bytes</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| table uid src src_port dest dest_port bytes
+                  | eval volume_converted=case(
+                    bytes&gt;=(1024*1024*1024*1024),round(bytes/(1024*1024*1024*1024),0)."TB",
+                    bytes&gt;=(1024*1024*1024),round(bytes/(1024*1024*1024),0)."GB",
+                    bytes&gt;=(1024*1024),round(bytes/(1024*1024),0)."MB",
+                    bytes&gt;=1024,round(bytes/1024,0)."KB",
+                    1=1,bytes."B")
+                | rename  volume_converted as "Total Bytes"
+                | sort 10 -bytes</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -157,10 +197,10 @@
     <panel>
       <title>Connections - Top 10 - Total Bytes By Destination IP</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+        <search base="baseSearch">
+          <query>
 | table dest, bytes
-| eval volume_converted=case( 
+| eval volume_converted=case(
      bytes&gt;=(1024*1024*1024*1024),round(bytes/(1024*1024*1024*1024),0)."TB",
      bytes&gt;=(1024*1024*1024),round(bytes/(1024*1024*1024),0)."GB",
      bytes&gt;=(1024*1024),round(bytes/(1024*1024),0)."MB",
@@ -169,8 +209,6 @@
 | rename volume_converted as "Total Bytes"
 | sort 10 -bytes
 | fields - bytes</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -185,20 +223,18 @@
     <panel>
       <title>Connections - Top 10 - Total Bytes By Destination Port</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+        <search base="baseSearch">
+          <query>
 | table dest_port,bytes
-| eval volume_converted=case( 
+| eval volume_converted=case(
      bytes&gt;=(1024*1024*1024*1024),round(bytes/(1024*1024*1024*1024),0)."TB",
      bytes&gt;=(1024*1024*1024),round(bytes/(1024*1024*1024),0)."GB",
      bytes&gt;=(1024*1024),round(bytes/(1024*1024),0)."MB",
  bytes&gt;=1024,round(bytes/1024,0)."KB",
  1=1,bytes."B")
 | rename volume_converted as "Total Bytes"
-| sort 10 -bytes 
+| sort 10 -bytes
 | fields - bytes</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -213,10 +249,10 @@
     <panel>
       <title>Connections - Top 10 - Total Bytes By Source IP</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+        <search base="baseSearch">
+          <query>
 | table src, bytes
-| eval volume_converted=case( 
+| eval volume_converted=case(
      bytes&gt;=(1024*1024*1024*1024),round(bytes/(1024*1024*1024*1024),0)."TB",
      bytes&gt;=(1024*1024*1024),round(bytes/(1024*1024*1024),0)."GB",
      bytes&gt;=(1024*1024),round(bytes/(1024*1024),0)."MB",
@@ -224,8 +260,6 @@
  1=1,bytes."B")
 | rename  volume_converted as "Total Bytes"
 | sort 10 -bytes</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -239,10 +273,10 @@
     <panel>
       <title>Connections - Top 10 - Total Bytes By Source Port</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
+        <search base="baseSearch">
+          <query>
 | table src_port, bytes
-| eval volume_converted=case( 
+| eval volume_converted=case(
      bytes&gt;=(1024*1024*1024*1024),round(bytes/(1024*1024*1024*1024),0)."TB",
      bytes&gt;=(1024*1024*1024),round(bytes/(1024*1024*1024),0)."GB",
      bytes&gt;=(1024*1024),round(bytes/(1024*1024),0)."MB",
@@ -250,8 +284,6 @@
  1=1,bytes."B")
 | rename  volume_converted as "Total Bytes"
 | sort 10 -bytes</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -267,11 +299,8 @@
     <panel>
       <title>Connections - Protocol (Pie Chart)</title>
       <chart>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by proto</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by proto</query>
         </search>
         <option name="charting.chart">pie</option>
         <option name="charting.drilldown">none</option>
@@ -280,11 +309,8 @@
     <panel>
       <title>Connections - Protocol (Bar Chart)</title>
       <chart>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| stats count by proto</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by proto</query>
         </search>
         <option name="charting.axisTitleX.text">Protocol</option>
         <option name="charting.axisTitleY.text">Count</option>
@@ -299,13 +325,8 @@
     <panel>
       <title>Connections - Source IP Address</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by src
-| sort -count
-| rename count as Count src as "IP Address"</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query> | stats count by src| sort -count| rename count as Count src as "IP Address"</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -320,13 +341,8 @@
     <panel>
       <title>Connections - Destination IP Address</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by dest
-| sort -count
-| rename count as Count dest as "IP Address"</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by dest| sort -count| rename count as Count dest as "IP Address"</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -343,12 +359,8 @@
     <panel>
       <title>Connections - Source Bytes</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by bytes_in 
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by bytes_in | sort -count</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -357,12 +369,8 @@
     <panel>
       <title>Connections - Destination Bytes</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by bytes_out 
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query> | stats count by bytes_out | sort -count</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -371,12 +379,8 @@
     <panel>
       <title>Connections - Missed Bytes</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by missed_bytes 
-| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by missed_bytes | sort -count</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -387,13 +391,8 @@
     <panel>
       <title>Connections - Connection State</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$ 
-| stats count by conn_state, conn_desc
-| sort -count
-| rename count as Count conn_state as "Connection State Code" conn_desc as "Connection State Description"</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by conn_state, conn_desc | sort -count | rename count as Count conn_state as "Connection State Code" conn_desc as "Connection State Description"</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>
@@ -406,8 +405,7 @@
       <title>Connections - Count by Destination Country</title>
       <map>
         <search>
-          <query>sourcetype=bro_conn
-| stats count by country_name | geom geo_countries featureIdField="country_name"</query>
+          <query>sourcetype=bro_conn | stats count by country_name | geom geo_countries featureIdField="country_name"</query>
           <earliest>$selection.earliest$</earliest>
           <latest>$selection.latest$</latest>
         </search>
@@ -422,28 +420,15 @@
     <panel>
       <title>Connection - Logs</title>
       <table>
-        <search>
-          <query>sourcetype=bro_conn src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-<<<<<<< HEAD
-| table _time,src,src_port,dest,dest_port, uid, spid
-=======
-| table _time,src,src_port,dest,dest_port, uid, id
->>>>>>> 947b17bf9968ac2bffb1dc92b49a8578688ca08b
-| sort -_time</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| table _time,src,src_port,dest,dest_port, uid, spid | sort -_time</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-<<<<<<< HEAD
           <condition field="spid">
-            <link target="_blank">https://192.168.126.129/capme/splunk.php?spid=$row.spid$</link>
-=======
-          <condition field="id">
             <link target="_blank">https://192.168.235.137/capme/splunk.php?spid=$row.id$</link>
->>>>>>> 947b17bf9968ac2bffb1dc92b49a8578688ca08b
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_base_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>

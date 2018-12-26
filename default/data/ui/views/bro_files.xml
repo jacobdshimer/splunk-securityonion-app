@@ -1,46 +1,90 @@
 <form>
+  <search id="formInput">
+    <query>sourcetype=bro_files src=$sourceip_tok$ dest=$destinationip_tok$ $search_token$ | table src dest</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=bro_files src=$sourceip_tok$ dest=$destinationip_tok$ $search_token$ | table _time, uid, spid, src, dest, mime_type, seen_bytes</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <label>Bro Files</label>
-  <fieldset submitButton="false" autoRun="true">
-    <input type="time" token="timepicker" searchWhenChanged="true">
-      <label>Select Time</label>
-      <default>
-        <earliest>-24h@h</earliest>
-        <latest>now</latest>
-      </default>
-    </input>
-    <input type="radio" token="auto_refresh" searchWhenChanged="true">
-      <label>Auto Refresh</label>
-      <choice value="5s">5 Seconds</choice>
-      <choice value="30s">30 Seconds</choice>
-      <choice value="1m">1 Minute</choice>
-      <choice value="2m">2 Minutes</choice>
-      <choice value="5m">5 minutes</choice>
-    </input>
-    <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
-      <label>Source IP:</label>
-      <default>*</default>
-      <choice value="*">All</choice>
-      <search>
-        <query>sourcetype=bro_files dest=$destinationip_tok$ | stats count by src</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-      <fieldForLabel>src</fieldForLabel>
-      <fieldForValue>src</fieldForValue>
-    </input>
-    <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
-      <label>Destination IP:</label>
-      <choice value="*">All</choice>
-      <default>*</default>
-      <fieldForLabel>dest</fieldForLabel>
-      <fieldForValue>dest</fieldForValue>
-      <search>
-        <query>sourcetype=bro_files src=$sourceip_tok$ | stats count by dest</query>
-        <earliest>$selection.earliest$</earliest>
-        <latest>$selection.latest$</latest>
-      </search>
-    </input>
-  </fieldset>
+  <fieldset submitButton="false" autoRun="true"></fieldset>
+  <row>
+    <panel>
+      <title>Time Inputs</title>
+      <input type="time" token="timepicker" searchWhenChanged="true">
+        <label>Select Time</label>
+        <default>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </default>
+      </input>
+      <input type="radio" token="auto_refresh" searchWhenChanged="true">
+        <label>Auto Refresh</label>
+        <choice value="5s">5 Seconds</choice>
+        <choice value="30s">30 Seconds</choice>
+        <choice value="1m">1 Minute</choice>
+        <choice value="2m">2 Minutes</choice>
+        <choice value="5m">5 minutes</choice>
+      </input>
+    </panel>
+    <panel>
+      <title>IP and Port Fields Filtering</title>
+      <input type="dropdown" token="sourceip_tok" searchWhenChanged="true">
+        <label>Source IP:</label>
+        <default>*</default>
+        <choice value="*">All</choice>
+        <search base="formInput">
+          <query>| stats count by src</query>
+        </search>
+        <fieldForLabel>src</fieldForLabel>
+        <fieldForValue>src</fieldForValue>
+      </input>
+      <input type="dropdown" token="destinationip_tok" searchWhenChanged="true">
+        <label>Destination IP:</label>
+        <choice value="*">All</choice>
+        <default>*</default>
+        <fieldForLabel>dest</fieldForLabel>
+        <fieldForValue>dest</fieldForValue>
+        <search base="formInput">
+          <query>| stats count by dest</query>
+        </search>
+      </input>
+    </panel>
+    <panel>
+      <title>Custom Filtering - Currently only one field at a time</title>
+      <input type="dropdown" token="field" searchWhenChanged="true">
+        <label>Select a Field:</label>
+        <fieldForLabel>field</fieldForLabel>
+        <fieldForValue>field</fieldForValue>
+        <search>
+          <query>sourcetype="bro_files" | fieldsummary | table field</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <initialValue>uid</initialValue>
+      </input>
+      <input type="multiselect" token="search_token" searchWhenChanged="true">
+        <label>Search Terms</label>
+        <prefix>(</prefix>
+        <suffix>)</suffix>
+        <delimiter> OR  </delimiter>
+        <choice value="*">All</choice>
+        <valuePrefix>$field$="</valuePrefix>
+        <valueSuffix>"</valueSuffix>
+        <fieldForLabel>$field$</fieldForLabel>
+        <fieldForValue>$field$</fieldForValue>
+        <search>
+          <query>sourcetype=bro_files | stats count by $field$</query>
+          <earliest>$selection.earliest$</earliest>
+          <latest>$selection.latest$</latest>
+        </search>
+        <initialValue>*</initialValue>
+      </input>
+    </panel>
+  </row>
   <row>
     <panel>
       <html>
@@ -90,35 +134,31 @@
   </row>
   <row>
     <panel>
-      <title>Files - MIME Type (Bar Chart)</title>
-      <chart>
-        <search>
-          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
-| stats count by mime_type
-| sort -count</query>
-          <earliest>$timepicker.earliest$</earliest>
-          <latest>$timepicker.latest$</latest>
+      <title>Files - MIME Type (Word Cloud)</title>
+      <viz type="wordcloud_app.wordcloud">
+        <search base="baseSearch">
+          <query>| stats count by mime_type | sort -count</query>
         </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">45</option>
-        <option name="charting.axisY.scale">log</option>
-        <option name="charting.chart">column</option>
-        <option name="charting.chart.showDataLabels">all</option>
-        <option name="charting.drilldown">all</option>
+        <option name="drilldown">all</option>
         <option name="refresh.display">progressbar</option>
-      </chart>
+        <option name="wordcloud_app.wordcloud.alignmentMode">horizontal</option>
+        <option name="wordcloud_app.wordcloud.backgroundColor">#fff</option>
+        <option name="wordcloud_app.wordcloud.colorBy">colorMode</option>
+        <option name="wordcloud_app.wordcloud.colorMode">categorical</option>
+        <option name="wordcloud_app.wordcloud.maxColor">#3fc77a</option>
+        <option name="wordcloud_app.wordcloud.minColor">#d93f3c</option>
+        <option name="wordcloud_app.wordcloud.numOfBins">3</option>
+        <option name="wordcloud_app.wordcloud.splunkTastic">false</option>
+        <option name="wordcloud_app.wordcloud.useColors">true</option>
+      </viz>
     </panel>
   </row>
   <row>
     <panel>
       <title>Files - Source IP Address</title>
       <table>
-        <search>
-          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
-| stats count by src,conn_uids{}
-| sort -count
-| rename src as "Transfer IP", conn_uids{} as uid</query>
-          <earliest>$timepicker.earliest$</earliest>
-          <latest>$timepicker.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by src,uid | sort -count | rename src as "Transfer IP"</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -136,19 +176,17 @@
     <panel>
       <title>Files - Files By Size</title>
       <table>
-        <search>
-          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
-| stats sum(seen_bytes) as totalBytes by conn_uids{}
-| eval volume_converted=case( 
+        <search base="baseSearch">
+          <query>
+| stats sum(seen_bytes) as totalBytes by uid
+| eval volume_converted=case(
      totalBytes&gt;=(1024*1024*1024*1024),round(totalBytes/(1024*1024*1024*1024),0)."TB",
      totalBytes&gt;=(1024*1024*1024),round(totalBytes/(1024*1024*1024),0)."GB",
      totalBytes&gt;=(1024*1024),round(totalBytes/(1024*1024),0)."MB",
  totalBytes&gt;=1024,round(totalBytes/1024,0)."KB",
  1=1,totalBytes."B")
 | sort -totalBytes
-| rename  volume_converted as "Total Bytes" totalBytes as "Bytes"  conn_uids{} as "Files UIDs"</query>
-          <earliest>$timepicker.earliest$</earliest>
-          <latest>$timepicker.latest$</latest>
+| rename  volume_converted as "Total Bytes" totalBytes as "Bytes" uid as "Files UIDs"</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -160,13 +198,8 @@
     <panel>
       <title>FIles - Destination IP Address</title>
       <table>
-        <search>
-          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
-| stats count by dest,conn_uids{}
-| sort -count
-| rename conn_uids{} as uid</query>
-          <earliest>$timepicker.earliest$</earliest>
-          <latest>$timepicker.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by dest,uid | sort -count</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -184,11 +217,8 @@
     <panel>
       <title>Files - MIME Type</title>
       <chart>
-        <search>
-          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$
-| stats count by mime_type</query>
-          <earliest>$timepicker.earliest$</earliest>
-          <latest>$timepicker.latest$</latest>
+        <search base="baseSearch">
+          <query>| stats count by mime_type</query>
         </search>
         <option name="charting.axisTitleX.visibility">visible</option>
         <option name="charting.axisTitleY.visibility">visible</option>
@@ -205,13 +235,8 @@
     <panel>
       <title>Files - Logs</title>
       <table>
-        <search>
-          <query>sourcetype=bro_files src=$sourceip_tok$   dest=$destinationip_tok$  
-| table _time,src,dest,conn_uids{}
-| sort -_time
-| rename conn_uids{} as uid</query>
-          <earliest>$timepicker.earliest$</earliest>
-          <latest>$timepicker.latest$</latest>
+        <search base="baseSearch">
+          <query>| table _time,src,dest,uid,spid | sort -_time</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
@@ -220,7 +245,7 @@
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-        
+
           <condition field="dest">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>

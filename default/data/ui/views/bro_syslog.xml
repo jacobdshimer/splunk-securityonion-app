@@ -1,4 +1,14 @@
 <form>
+  <search id="formInput">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table src src_port dest dest_port</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
+  <search id="baseSearch">
+    <query>sourcetype=bro_conn src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ | table uid, src, src_port, dest, dest_port, bytes, proto, bytes_in, bytes_out, missed_bytes, conn_state, conn_desc</query>
+    <earliest>$selection.earliest$</earliest>
+    <latest>$selection.latest$</latest>
+  </search>
   <label>Bro Syslog</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="timepicker" searchWhenChanged="true">
@@ -69,7 +79,7 @@
     <panel>
       <html>
         <h1>Input selections: SIP:$sourceip_tok$, SPRT:$sourceport_tok$, DIP:$destinationip_tok$, DPRT:$destinationport_tok$</h1>
-        <h1>Using Time: $selEarlier$ to $selLater$</h1>       
+        <h1>Using Time: $selEarlier$ to $selLater$</h1>
 		<h2>To edit, ctrl+f twice to pull up find and replace and replace bro_syslog with the source type, bro_syslog DASHBOARD with the dashboard name, and Syslog with the log type.</h2>
       </html>
     </panel>
@@ -120,7 +130,7 @@
         <title>Click an IP, port or UID to drilldown into all sources.</title>
         <search>
           <query>sourcetype=bro_syslog src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
-| table _time,src,src_port,dest,dest_port,uid 
+| table _time,src,src_port,dest,dest_port,uid
 | sort -_time</query>
           <earliest>$selection.earliest$</earliest>
           <latest>$selection.latest$</latest>
@@ -132,19 +142,19 @@
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-        
+
           <condition field="dest">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-            
+
           <condition field="src_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.src_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-          
+
           <condition field="dest_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.dest_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-          
+
           <condition field="uid">
             <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>

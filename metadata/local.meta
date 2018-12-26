@@ -14,35 +14,35 @@ modtime = 1534948788.759954300
 [views/bro_connections]
 owner = admin
 version = 7.1.2
-modtime = 1536083288.949282000
+modtime = 1545615472.244080700
 
 [views/bro_dcerpc]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.1
-modtime = 1536598848.939570500
+version = 7.1.2
+modtime = 1545615759.249438900
 
 [views/bro_dns]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536251707.201014000
+modtime = 1545612528.941283800
 
 [views/base_dashboard]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.1
-modtime = 1535648450.551290700
+version = 7.1.2
+modtime = 1545592935.708139100
 
 [views/bro_ftp]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536252022.829349000
+modtime = 1535338885.292459900
 
 [views/bro_weird]
 access = read : [ * ], write : [ admin, power ]
@@ -56,68 +56,68 @@ access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536252178.567164000
+modtime = 1545620931.963694600
 
 [views/bro_dhcp]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536168245.903514000
+modtime = 1545595021.036574400
 
 [views/bro_dnp3]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536249426.655324000
+modtime = 1535337462.021591200
 
 [views/bro_intel]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536252228.423864000
+version = 7.1.1
+modtime = 1535652485.361341900
 
 [views/bro_irc]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536252297.285139000
+version = 7.1.1
+modtime = 1535654290.330232200
 
 [views/bro_kerberos]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536252383.894587000
+version = 7.1.1
+modtime = 1535654254.326421700
 
 [views/bro_modbus]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536252698.649373000
+modtime = 1545704067.041780700
 
 [views/bro_mysql]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.1
-modtime = 1535134262.533335000
+version = 7.1.2
+modtime = 1545705389.057940600
 
 [views/bro_ntlm]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1536253193.324379000
+modtime = 1545710889.790497500
 
 [views/bro_pe]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536254131.201929000
+version = 7.1.1
+modtime = 1535134306.722301600
 
 [views/bro_radius]
 access = read : [ * ], write : [ admin, power ]
@@ -130,8 +130,8 @@ modtime = 1535134322.811992300
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536254085.702049000
+version = 7.1.1
+modtime = 1535134349.855995600
 
 [views/bro_rfp]
 access = read : [ * ], write : [ admin, power ]
@@ -144,15 +144,15 @@ modtime = 1535134361.234823300
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536256717.179864000
+version = 7.1.1
+modtime = 1535134372.494914900
 
 [views/bro_smb]
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.2
-modtime = 1536257644.615193000
+version = 7.1.1
+modtime = 1535134383.858819000
 
 [views/bro_smtp]
 access = read : [ * ], write : [ admin, power ]
@@ -214,8 +214,8 @@ modtime = 1535134484.621895900
 access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
-version = 7.1.1
-modtime = 1535134529.813547600
+version = 7.1.2
+modtime = 1545707085.138588400
 
 [views/hids]
 access = read : [ * ], write : [ admin, power ]
@@ -236,11 +236,11 @@ access = read : [ * ], write : [ admin, power ]
 export = none
 owner = admin
 version = 7.1.2
-modtime = 1535338910.429937800
+modtime = 1545618797.721250000
 
 [app/install/install_source_checksum]
 version = 7.1.1
-modtime = 1536591370.747142600
+modtime = 1535374357.709147500
 
 [inputs/splunktcp%3A%2F%2F9997]
 owner = admin
@@ -393,9 +393,9 @@ owner = admin
 version = 7.1.1
 modtime = 1535648065.933770100
 
-[views/bro_conn]
-access = read : [ * ], write : [ admin, power ]
+[lookups/seconion_addresses.csv]
+access = read : [ * ], write : [ admin ]
 export = none
 owner = admin
-version = 7.1.1
-modtime = 1536668109.327935200
+version = 7.1.2
+modtime = 1545592176.753259100
