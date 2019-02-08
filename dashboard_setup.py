@@ -7,7 +7,7 @@ files = os.listdir(path)
 def main():
 	print("Is this the initial setup? [Y]/N")
 	answer = input("> ") or "Y"
-	if answer == "Y":
+	if answer.upper() == "Y":
 		print("What is the IP address of your security onion master?")
 		ipaddr = input("> ")
 		for file in files:
