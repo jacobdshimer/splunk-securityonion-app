@@ -209,7 +209,7 @@
         <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="spid">
-            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.spid$&amp;stime=$row._time$&amp;stype=bro_modbus</link>
+            <link target="_blank">https://[INSERT SEC ONION IP ADDRESS]/capme/splunk.php?spid=$row.spid$&amp;stime=$row._time$&amp;stype=bro_modbus</link>
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
