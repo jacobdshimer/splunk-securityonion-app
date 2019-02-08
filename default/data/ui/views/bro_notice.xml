@@ -115,7 +115,7 @@
   </row>
   <row>
     <panel>
-      <title>Notice - Log Count</title>
+      <title>Notices- Log Count</title>
       <single>
         <search>
           <query>sourcetype="bro_notice" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
@@ -130,7 +130,7 @@
       </single>
     </panel>
     <panel>
-      <title>Notice - Log Count Over Time</title>
+      <title>Notices - Log Count Over Time</title>
       <chart>
         <search>
           <query>sourcetype="bro_notice" src=$sourceip_tok$ src_port=$sourceport_tok$ dest=$destinationip_tok$ dest_port=$destinationport_tok$
@@ -165,10 +165,8 @@
     <panel>
       <title>Notices - Destination Country</title>
       <table>
-        <search>
-          <query>sourcetype=bro_notice src=$sourceip_tok$ dest=$destinationip_tok$ src_port=$sourceport_tok$ dest_port=$destinationport_tok$ $search_token$| iplocation dest| stats count by Country| sort -count</query>
-          <earliest>$selection.earliest$</earliest>
-          <latest>$selection.latest$</latest>
+        <search base="baseSearch">
+          <query>| iplocation dest| stats count by Country| sort -count</query>
         </search>
         <option name="drilldown">none</option>
       </table>
@@ -176,7 +174,7 @@
   </row>
   <row>
     <panel>
-      <title>Notice - Destination Port (Vertical Bar Chart)</title>
+      <title>Notices- Destination Port (Vertical Bar Chart)</title>
       <chart>
         <search base="baseSearch">
           <query>| stats count by dest_port| sort -count</query>
@@ -229,7 +227,7 @@
   </row>
   <row>
     <panel>
-      <title>Notice - Message/Sub-Message</title>
+      <title>Notices- Message/Sub-Message</title>
       <table>
         <search base="baseSearch">
           <query>| stats count by msg,sub| sort -count</query>
@@ -250,7 +248,7 @@
   </row>
   <row>
     <panel>
-      <title>Notice - Logs</title>
+      <title>Notices- Logs</title>
       <table>
         <title>Click an IP, port or UID to drilldown into all sources.</title>
         <search base="baseSearch">
@@ -260,6 +258,9 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
+          <condition field="spid">
+            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.spid$&amp;stime=$row._time$&amp;stype=bro_notice</link>
+          </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>

@@ -258,8 +258,8 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-		  <condition field="spid">
-            <link target="_blank">https://192.168.91.132/capme/index.php?sip=$row.src$&amp;spt=$row.src_port$&amp;dip=$row.dest$&amp;dpt=$row.dest_port$&amp;stime=$row.startTime$&amp;etime=$row.endTime$&amp;usr=test&amp;pwd=RedLavaRed</link>
+          <condition field="spid">
+            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.spid$&amp;stime=$row._time$&amp;stype=bro_intel</link>
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>

@@ -43,7 +43,7 @@
       <title>NIDS - Alerts</title>
       <table>
         <search>
-          <query>sourcetype=sguild (src=$ip$ OR dest=$ip$)  
+          <query>sourcetype=sguild (src=$ip$ OR dest=$ip$)
 | stats count by rule_name
 | sort -count</query>
           <earliest>$earliest$</earliest>
@@ -71,7 +71,7 @@
       <title>OSSEC - Alerts</title>
       <table>
         <search>
-          <query>sourcetype="ossec" (src=$ip$ OR dest=$ip$) 
+          <query>sourcetype="ossec" (src=$ip$ OR dest=$ip$)
 | table _time, alert_reason, src, dest
 | sort -_time</query>
           <earliest>$earliest$</earliest>
@@ -221,7 +221,7 @@
       <table>
         <search>
           <query>sourcetype="bro_http"  (src=$ip$ OR dest=$ip$)
-| stats count by website_name 
+| stats count by website_name
 | sort -count</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
@@ -248,9 +248,7 @@
       <title>All Logs</title>
       <table>
         <search>
-          <query>sourcetype=* src=$ip$ OR dest=$ip$ duration=*
-| table _time,startTime,endTime, src,src_port,dest,dest_port, uid
-| sort -_time</query>
+          <query>sourcetype=bro_conn src=$ip$ OR dest=$ip$ |  table _time,src,src_port,dest,dest_port, uid, spid | sort -_time</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
         </search>
@@ -259,7 +257,7 @@
         <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="_time">
-            <link target="_blank">https://192.168.91.132/capme/index.php?sip=$row.src$&amp;spt=$row.src_port$&amp;dip=$row.dest$&amp;dpt=$row.dest_port$&amp;stime=$row.startTime$&amp;etime=$row.endTime$&amp;usr=test&amp;pwd=RedLavaRed</link>
+            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.spid$&amp;stime=$row._time$&amp;stype=bro_conn</link>
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_base_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>

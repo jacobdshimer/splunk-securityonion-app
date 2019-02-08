@@ -421,14 +421,14 @@
       <title>Connection - Logs</title>
       <table>
         <search base="baseSearch">
-          <query>| table _time,src,src_port,dest,dest_port, uid, spid | sort -_time</query>
+          <query>| eval time=floor(_time) | table _time, time AS epoch, src,src_port,dest,dest_port, uid, spid| sort -_time</query>
         </search>
         <option name="count">10</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="spid">
-            <link target="_blank">https://192.168.235.137/capme/splunk.php?spid=$row.id$</link>
+            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.spid$&amp;stime=$row.time$&amp;stype=bro_conn</link>
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_base_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
@@ -439,7 +439,7 @@
           <condition field="src_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.src_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-          <condition field="dest">
+          <condition field="dest_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.dest_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
           <condition field="uid">

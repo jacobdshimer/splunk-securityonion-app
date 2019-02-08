@@ -262,24 +262,20 @@
         <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="spid">
-            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.id$</link>
+            <link target="_blank">https://192.168.235.138/capme/splunk.php?spid=$row.spid$&amp;stime=$row._time$&amp;stype=bro_ftp</link>
           </condition>
           <condition field="src">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.src$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-
           <condition field="dest">
             <link target="_blank">/app/securityonion/host_dashboard?ip=$row.dest$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-
           <condition field="src_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.src_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-
           <condition field="dest_port">
             <link target="_blank">/app/securityonion/port_dashboard?port=$row.dest_port$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
-
           <condition field="uid">
             <link target="_blank">/app/securityonion/uid_dashboard?uid=$row.uid$&amp;earliest=$earliest$&amp;latest=$latest$</link>
           </condition>
