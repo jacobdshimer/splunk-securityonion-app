@@ -1,9 +1,10 @@
 # splunk-securityonion-app
 
 Inital Setup:
-1. Run dashboard_setup.py by type splunk cmd python ../dashboard_setup.py and when prompted either type Y or hit enter.
-2. Type in the IP address of your Security Onion Master and hit enter.
-3. This will change the default value for the security onion master to utilize CapMe.
+1. Change directories into the securityonion app
+2. Run dashboard_setup.py by type /opt/splunk/bin/splunk cmd python dashboard_setup.py and when prompted either type Y or hit enter.
+3. Type in the IP address of your Security Onion Master and hit enter.
+4. This will change the default value for the security onion master to utilize CapMe.
 
 Fix IP Address:
 1. If you mistyped your IP address, run the program again and type N.
